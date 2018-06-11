@@ -1,3 +1,13 @@
 psycopg2*
 config*
 backports
+__pycache__
+boto*
+concurrent
+dateutil
+docutils*
+futures*
+jmespath*
+python_dateutil*
+s3*
+six*
