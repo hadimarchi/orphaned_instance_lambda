@@ -22,6 +22,10 @@ class orphanedInstanceHandler:
     def get_sql(self):
         self.get_running_instances_sql = self.config.get("sql",
                                                          "get_running_instances_sql")
+        self.shutdown_sql = self.config.get(
+            'sql', 'give_orphans_shutdown_time')
+        self.finish_records_sql = self.config.get('sql',
+                                                  'give_orphan_instance_records_end_time')
 
     def get_ec2_client(self):
         sts_client = boto3.client('sts', region_name='us-east-1')
@@ -69,12 +73,9 @@ class orphanedInstanceHandler:
                     instance["Instances"][0]["InstanceId"])
 
     def shutdownOrphans(self):
-        shutdown_sql = self.config.get('sql', 'give_orphans_shutdown_time')
-        finish_records_sql = self.config.get('sql',
-                                             'give_orphan_instance_records_end_time')
-        self.do_hyp3_sql(shutdown_sql, vals={
+        self.do_hyp3_sql(self.shutdown_sql, vals={
                          'instance_ids': self.orphaned_instances})
-        self.do_hyp3_sql(finish_records_sql, vals={
+        self.do_hyp3_sql(self.finish_records_sql, vals={
                          'instance_ids': self.orphaned_instances})
 
     def do_hyp3_sql(self, sql, vals=None):
